@@ -15,13 +15,18 @@ st.set_page_config(page_title="Rainfall Analysis & Forecast", layout="wide")
 
 st.title("Rainfall Analysis & Forecast Dashboard (2015–2023)")
 
-# Loading DataSet
-uploaded = st.file_uploader("Upload rainfall CSV (columns: date,rainfall_mm)", type=["csv"])
-if uploaded:
-    df = pd.read_csv(uploaded)
+# Attempt to read CSV from app folder
+default_file = "rainfall_2015_2023.csv"
+
+if Path(default_file).exists():
+    df = pd.read_csv(default_file)
 else:
-    st.info("Upload a CSV to begin or ensure it's named 'rainfall_2015_2023.csv'")
-    st.stop()
+    uploaded = st.file_uploader("Upload rainfall CSV (columns: date,rainfall_mm)", type=["csv"])
+    if uploaded is not None:
+        df = pd.read_csv(uploaded)
+    else:
+        st.info("Upload a CSV to begin or ensure it's named 'rainfall_2015_2023.csv'")
+        st.stop()
 
 df['date'] = pd.to_datetime(df['date'])
 df.set_index('date', inplace=True)
